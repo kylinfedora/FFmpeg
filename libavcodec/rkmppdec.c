@@ -43,7 +43,9 @@
 #include <rga/RgaApi.h>
 #endif
 
-#define RECEIVE_FRAME_TIMEOUT   100
+// TODO: increase it when we are about to detect ready frames.
+//#define RECEIVE_FRAME_TIMEOUT   100
+#define RECEIVE_FRAME_TIMEOUT   8
 #define FRAMEGROUP_MAX_FRAMES   16
 #define INPUT_MAX_PACKETS       4
 
@@ -674,9 +676,12 @@ static int rkmpp_receive_frame(AVCodecContext *avctx, AVFrame *frame)
             }
         }
 
+#if 0
+        // TODO: only do this when there's no frame ready
         // make sure we keep decoder full
         if (freeslots > 1)
             return AVERROR(EAGAIN);
+#endif
     }
 
     return rkmpp_retrieve_frame(avctx, frame);
