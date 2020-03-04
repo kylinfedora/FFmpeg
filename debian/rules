@@ -17,7 +17,7 @@ export DEB_LDFLAGS_MAINT_STRIP=-Wl,-Bsymbolic-functions
 # Package name for the extra flavor.
 SHLIB_PKGS := $(shell sed -nr '/extra/! s/^Package:[[:space:]]*(lib.*[0-9]+)[[:space:]]*$$/\1/p' debian/control)
 EXTRA_PKGS := $(shell sed -nr 's/^Package:[[:space:]]*(.*extra[0-9]+)[[:space:]]*$$/\1/p' debian/control)
-FLAVORS = standard extra static
+FLAVORS = standard # extra static
 
 # Enable as many features as possible, as long as the result is still GPLv2+ (a GPLv3+ variant is built as libavcodec-extra/libavfilter-extra flavor).
 # The following flags (and build-dependencies) are not added, because they would require a libavformat-extra flavor:
@@ -270,13 +270,13 @@ ifeq ($(DEB_HOST_ARCH),powerpc)
 	install -d debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/altivec
 	install -m 644 debian/altivec/*/*.so.* debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/altivec
 endif
-	dh_auto_install -a --sourcedirectory=debian/extra --destdir=debian/tmp/extra
-ifeq ($(DEB_HOST_ARCH),powerpc)
-	install -d debian/tmp/extra/usr/lib/$(DEB_HOST_MULTIARCH)/altivec
-	install -m 644 debian/altivec-extra/*/*.so.* debian/tmp/extra/usr/lib/$(DEB_HOST_MULTIARCH)/altivec
-endif
+	# dh_auto_install -a --sourcedirectory=debian/extra --destdir=debian/tmp/extra
+# ifeq ($(DEB_HOST_ARCH),powerpc)
+	# install -d debian/tmp/extra/usr/lib/$(DEB_HOST_MULTIARCH)/altivec
+	# install -m 644 debian/altivec-extra/*/*.so.* debian/tmp/extra/usr/lib/$(DEB_HOST_MULTIARCH)/altivec
+# endif
 	# Use the static libraries from the --disable-pic build
-	install -m 644 debian/static/*/lib*.a debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)
+	# install -m 644 debian/static/*/lib*.a debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)
 
 override_dh_auto_install-indep:
 	$(MAKE) -C debian/standard DESTDIR=$(CURDIR)/debian/tmp install-doc install-examples
@@ -284,7 +284,7 @@ override_dh_auto_install-indep:
 	cd debian/tmp/usr/share/doc/ffmpeg && tree -H '.' -L 1 -P '*.html' --noreport --charset utf-8 -T 'FFmpeg Manual Index' -o index.html
 
 override_dh_install:
-	dh_install $(addprefix -p,$(EXTRA_PKGS)) --sourcedir=debian/tmp/extra
+	# dh_install $(addprefix -p,$(EXTRA_PKGS)) --sourcedir=debian/tmp/extra
 	dh_install --remaining-packages
 
 override_dh_shlibdeps:
